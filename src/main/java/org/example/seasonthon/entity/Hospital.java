@@ -2,6 +2,7 @@ package org.example.seasonthon.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 
@@ -10,7 +11,7 @@ import lombok.Getter;
 public class Hospital {
 
   @Id
-  @GeneratedValue
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String name_korean;                // 병원명 국문
@@ -25,6 +26,6 @@ public class Hospital {
   private String p_number;                   // 전화번호
   private String language;                   // 지원 가능 언어
 
-  private Double latitude;                   // 위도
-  private Double longitude;                  // 경도
+  private String latitude;                   // 위도
+  private String longitude;                  // 경도
 }
