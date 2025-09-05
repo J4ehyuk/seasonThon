@@ -11,7 +11,7 @@ services:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./mysql_conf/utf8.cnf:/etc/mysql/conf.d/utf8.cnf:ro
+      - ./mysql_conf/utf8.cnf:/etc/mysql/conf.d/utf8.cnf:ro # 로컬의 설정 -> 도커 설정
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -p$${MYSQL_ROOT_PASSWORD} --silent"]
       interval: 5s
