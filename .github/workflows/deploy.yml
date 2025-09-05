@@ -3,7 +3,7 @@ name: Deploy seasonthon-backend-project
 on:
   push:
     branches:
-      - main
+      - feat/nearby-hospital
 
 jobs:
   deploy:
