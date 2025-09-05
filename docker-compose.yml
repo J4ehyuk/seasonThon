@@ -21,19 +21,19 @@ services:
     networks:
       - seasonthon-network
 
-  libretranslate:
-    image: libretranslate/libretranslate:latest
-    container_name: libretranslate
-    restart: unless-stopped
-    environment:
-      LT_LOAD_ONLY: ko,en,ja,zh   # 필요한 언어만 로드 (메모리/속도 최적화)
-      LT_CPU_THREADS: 2           # 서버 자원에 맞게 조정
-    ports:
-      - "5010:5000"               # 로컬 확인용: http://localhost:5010/translate
-    volumes:
-      - lt_models:/root/.local/share/argos-translate
-    networks:
-      - seasonthon-network
+#  libretranslate:
+#    image: libretranslate/libretranslate:latest
+#    container_name: libretranslate
+#    restart: unless-stopped
+#    environment:
+#      LT_LOAD_ONLY: ko,en,ja,zh   # 필요한 언어만 로드 (메모리/속도 최적화)
+#      LT_CPU_THREADS: 2           # 서버 자원에 맞게 조정
+#    ports:
+#      - "5010:5000"               # 로컬 확인용: http://localhost:5010/translate
+#    volumes:
+#      - lt_models:/root/.local/share/argos-translate
+#    networks:
+#      - seasonthon-network
 
   app:
     build:
