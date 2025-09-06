@@ -3,8 +3,6 @@ package org.example.seasonthon.controller;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.example.seasonthon.dto.TranslateRequest;
-import org.example.seasonthon.dto.TranslateResponse;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

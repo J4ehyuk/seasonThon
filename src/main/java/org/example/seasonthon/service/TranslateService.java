@@ -1,7 +1,5 @@
 package org.example.seasonthon.service;
 
-import org.example.seasonthon.dto.TranslateRequest;
-import org.example.seasonthon.dto.TranslateResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
