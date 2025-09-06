@@ -3,26 +3,64 @@ package org.example.seasonthon.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.seasonthon.dto.HospitalLocResponseDto;
+import org.example.seasonthon.dto.SymptomResponseDto;
 import org.example.seasonthon.entity.Hospital;
 import org.example.seasonthon.repository.HospitalRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.Map.entry;
 
 @Service
 @RequiredArgsConstructor
 public class HospitalService {
+  // 영어/언어명/약어 → 한글 태그 매핑 테이블 (키는 소문자 기준)
+  private static final Map<String, String> EN_TO_KO = Map.ofEntries(
+          entry("Mongolia", "몽골"),
+          entry("America", "미국"),
+          entry("Vietnam", "베트남"),
+          entry("Russia", "러시아"),
+          entry("Japan", "일본"),
+          entry("China", "중국"),
+          entry("Middle East", "중동"),
+          entry("Korea", "한국"),
+          entry("Other", "기타")
+  );
 
   private final HospitalRepository hospitalRepository;
+  private final SymptomService symptomService;
 
-  public List<HospitalLocResponseDto> findHospitalsNearby(double userLat, double userLng) {
-    List<Hospital> all = hospitalRepository.findAll();
 
-    return all.stream()
-            .filter(h -> distance(userLat, userLng,
-                    h.getLatitude(),
-                    h.getLongitude()) <= 1.0)
+  public List<HospitalLocResponseDto> findHospitalsNearby(double userLat, double userLng, String prompt, String country) {
+    // 🔍 1. 증상으로부터 진료과목 & 언어 추론
+    SymptomResponseDto symptomInfo = symptomService.processSymptom(prompt);
+
+    String department = symptomInfo.getDepartment(); // 사용자가 진료를 볼 진료과목
+
+    // 🔍 2. 모든 병원 조회
+    List<Hospital> allHospitals = hospitalRepository.findAll();
+
+    // 🔍 3. 필터링: 반경 1km 이내, 진료과목 포함, 언어 일치
+    return allHospitals.stream()
+            // 1. 반경 1km 이내에
+            .filter(h -> distance(userLat, userLng, h.getLatitude(), h.getLongitude()) < 1.0)
+            // 2. 사용자가 진료 볼 진료과목을 포함하고
+            .filter(h -> h.getSpecialtyKorean() != null && h.getSpecialtyKorean().contains(department))
+            // 🔎 언어 필터 직전, 현재 튜플(병원)의 언어 출력
+            .peek(h -> {
+              String koTarget = EN_TO_KO.get(country); // 사용자가 고른 나라(영→한 매핑)
+              String langs = String.valueOf(h.getLanguage()); // null 안전하게 문자열화
+              System.out.println(String.format(
+                      "언어 필터 전 | 병원='%s', 언어='%s', 찾는국가(ko)='%s'",
+                      h.getNameKorean(), langs, koTarget
+              ));
+            })
+            // 3. 사용자가 선택한 나라를 포함하는
+            .filter(h -> h.getLanguage() != null && h.getLanguage().contains(EN_TO_KO.get(country)))
+            // 4. 의료기관 검색
             .map(h -> new HospitalLocResponseDto(
                     h.getNameKorean(),
                     h.getAddressKorean(),
@@ -35,6 +73,7 @@ public class HospitalService {
             ))
             .collect(Collectors.toList());
   }
+
 
   /**
    * 두 지점(위도, 경도) 사이의 거리(km)를 계산하는 메서드
