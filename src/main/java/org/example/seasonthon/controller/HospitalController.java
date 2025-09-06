@@ -29,7 +29,7 @@ public class HospitalController {
           @RequestBody HospitalLocRequestDto dto
   ) {
 
-    List<HospitalLocResponseDto> ret = hospitalService.findHospitalsNearby(dto.latitude(), dto.longitude(), dto.prompt(), dto.country());
+    List<HospitalLocResponseDto> ret = hospitalService.findHospitalsNearby(37.49877474832768, 127.0278195920194, dto.prompt(), dto.country());
     System.out.println("반경 1km 병원 개수 : " + ret.size());
     return ret;
   }
