@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.seasonthon.dto.HospitalLocRequestDto;
 import org.example.seasonthon.dto.HospitalLocResponseDto;
+import org.example.seasonthon.dto.HospitalMapResponseDto;
 import org.example.seasonthon.service.HospitalService;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,12 +26,11 @@ public class HospitalController {
   @Operation(
           description = "사용자의 위도, 경도, 언어 정보, 진료과목을 바탕으로 반경 1km 내의 병원 정보를 반환합니다."
   )
-  public List<HospitalLocResponseDto> getNearbyHospitals(
+  public HospitalMapResponseDto getNearbyHospitals(
           @RequestBody HospitalLocRequestDto dto
   ) {
 
-    List<HospitalLocResponseDto> ret = hospitalService.findHospitalsNearby(37.49877474832768, 127.0278195920194, dto.prompt(), dto.country());
-    System.out.println("반경 1km 병원 개수 : " + ret.size());
+    HospitalMapResponseDto ret = hospitalService.findHospitalsNearby(37.49877474832768, 127.0278195920194, dto.prompt(), dto.country());
     return ret;
   }
 }
