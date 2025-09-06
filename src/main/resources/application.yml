@@ -1,6 +1,6 @@
 spring:
   config:
-    import: optional:file:.env.properties
+    import: optional:file:.env
 
   application:
     name: seasonthon-docker
@@ -42,11 +42,6 @@ server:
 logging:
   level:
     org.springframework.security: DEBUG
-
-#translate:
-#  # 환경변수 TRANSLATE_BASE_URL 있으면 그거 쓰고, 없으면 로컬 기본값
-#  base-url: ${TRANSLATE_BASE_URL:http://localhost:5010}
-
 
 openai:
   key: ${OPENAI_KEY}  # .env에서 불러옴

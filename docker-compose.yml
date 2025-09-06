@@ -48,14 +48,19 @@ services:
 #        condition: service_started      # 번역 서버 기동 후 앱 시작
     ports:
       - "8080:8080"
+
+    env_file:
+      - .env              # OPENAI_KEY 등 .env의 모든 키가 컨테이너로 주입됨
+
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/SEASONTHON_DB?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: 1234
       SPRING_DATASOURCE_HIKARI_INITIALIZATIONFAILTIMEOUT: "-1"
-      # ⚠️ 백엔드에서 번역 프록시/클라이언트 만들 때 이 URL 사용
-#      TRANSLATE_BASE_URL: http://libretranslate:5000
+
+
+
     restart: unless-stopped
     networks:
       - seasonthon-network
