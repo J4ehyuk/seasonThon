@@ -103,9 +103,15 @@ public class HospitalService {
             ))
             .collect(Collectors.toList());
 
+//    // 4. Static Maps API URL 생성
+//    String markers = filteredHospitals.stream()
+//            .map(h -> "&markers=color:red|" + h.latitude() + "," + h.longitude())
+//            .collect(Collectors.joining());
+
     // 4. Static Maps API URL 생성
     String markers = filteredHospitals.stream()
-            .map(h -> "&markers=color:red|" + h.latitude() + "," + h.longitude())
+            .map(h -> "&markers=icon:https://maps.gstatic.com/mapfiles/ms2/micons/hospitals.png|"
+                    + h.latitude() + "," + h.longitude())
             .collect(Collectors.joining());
 
     String mapUrl = String.format(
