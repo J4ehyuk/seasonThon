@@ -8,6 +8,7 @@ import org.example.seasonthon.entity.Hospital;
 import org.example.seasonthon.repository.HospitalRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -48,7 +49,9 @@ public class HospitalService {
             // 1. 반경 1km 이내에
             .filter(h -> distance(userLat, userLng, h.getLatitude(), h.getLongitude()) < 1.0)
             // 2. 사용자가 진료 볼 진료과목을 포함하고
-            .filter(h -> h.getSpecialtyKorean() != null && h.getSpecialtyKorean().contains(department))
+            //.filter(h -> h.getSpecialtyKorean() != null && h.getSpecialtyKorean().contains(department))
+            .filter(h -> hasExactDepartment(h.getSpecialtyKorean(), department))
+
             // 🔎 언어 필터 직전, 현재 튜플(병원)의 언어 출력
             .peek(h -> {
               String koTarget = EN_TO_KO.get(country); // 사용자가 고른 나라(영→한 매핑)
@@ -74,6 +77,13 @@ public class HospitalService {
             .collect(Collectors.toList());
   }
 
+  private boolean hasExactDepartment(String specialties, String dept) {
+    if (specialties == null || dept == null) return false;
+    // "구강악안면외과, 치과보철과, ..., 구강내과, ..., 예방치과" 형태를 쉼표로 분리해 완전 일치만 검사
+    return Arrays.stream(specialties.split("\\s*,\\s*"))
+            .map(String::trim)
+            .anyMatch(dept::equals);
+  }
 
   /**
    * 두 지점(위도, 경도) 사이의 거리(km)를 계산하는 메서드
