@@ -11,8 +11,8 @@ public record HospitalLocRequestDto(
         Double latitude,  // 위도
 
         @Schema(description = "현재 사용자의 경도", example = "127.0278195920194")
-        Double longitude, // 경도
+        Double longitude  // 경도
 
-        @Schema(description = "선호하는 언어 (예: English, Japanese, Chinese)", example = "English")
-        String language   // 사용 언어
+//        @Schema(description = "선호하는 언어 (예: English, Japanese, Chinese)", example = "English")
+//        String language   // 사용 언어
 ) {}
