@@ -35,49 +35,6 @@ public class HospitalService {
   private final HospitalRepository hospitalRepository;
   private final SymptomService symptomService;
 
-
-//  public List<HospitalLocResponseDto> findHospitalsNearby(double userLat, double userLng, String prompt, String country) {
-//    // 🔍 1. 증상으로부터 진료과목 & 언어 추론
-//    SymptomResponseDto symptomInfo = symptomService.processSymptom(prompt);
-//
-//    String department = symptomInfo.getDepartment(); // 사용자가 진료를 볼 진료과목
-//
-//    // 🔍 2. 모든 병원 조회
-//    List<Hospital> allHospitals = hospitalRepository.findAll();
-//
-//    // 🔍 3. 필터링: 반경 1km 이내, 진료과목 포함, 언어 일치
-//    return allHospitals.stream()
-//            // 1. 반경 1km 이내에
-//            .filter(h -> distance(userLat, userLng, h.getLatitude(), h.getLongitude()) < 1.0)
-//            // 2. 사용자가 진료 볼 진료과목을 포함하고
-//            //.filter(h -> h.getSpecialtyKorean() != null && h.getSpecialtyKorean().contains(department))
-//            .filter(h -> hasExactDepartment(h.getSpecialtyKorean(), department))
-//
-//            // 🔎 언어 필터 직전, 현재 튜플(병원)의 언어 출력
-//            .peek(h -> {
-//              String koTarget = EN_TO_KO.get(country); // 사용자가 고른 나라(영→한 매핑)
-//              String langs = String.valueOf(h.getLanguage()); // null 안전하게 문자열화
-//              System.out.println(String.format(
-//                      "언어 필터 전 | 병원='%s', 언어='%s', 찾는국가(ko)='%s'",
-//                      h.getNameKorean(), langs, koTarget
-//              ));
-//            })
-//            // 3. 사용자가 선택한 나라를 포함하는
-//            .filter(h -> h.getLanguage() != null && h.getLanguage().contains(EN_TO_KO.get(country)))
-//            // 4. 의료기관 검색
-//            .map(h -> new HospitalLocResponseDto(
-//                    h.getNameKorean(),
-//                    h.getAddressKorean(),
-//                    h.getSpecialtyKorean(),
-//                    h.getPNumber(),
-//                    h.getLanguage(),
-//                    h.getLatitude(),
-//                    h.getLongitude(),
-//                    h.getYkiho()
-//            ))
-//            .collect(Collectors.toList());
-//  }
-
   public HospitalMapResponseDto findHospitalsNearby(double userLat, double userLng, String prompt, String country) {
     // 1. 증상으로부터 진료과목 추론
     SymptomResponseDto symptomInfo = symptomService.processSymptom(prompt);
@@ -86,27 +43,45 @@ public class HospitalService {
     // 2. 모든 병원 조회
     List<Hospital> allHospitals = hospitalRepository.findAll();
 
-    // 3. 조건에 맞는 병원 필터링
-    List<HospitalLocResponseDto> filteredHospitals = allHospitals.stream()
-            .filter(h -> distance(userLat, userLng, h.getLatitude(), h.getLongitude()) < 1.0)
-            .filter(h -> hasExactDepartment(h.getSpecialtyKorean(), department))
-            .filter(h -> h.getLanguage() != null && h.getLanguage().contains(EN_TO_KO.get(country)))
-            .map(h -> new HospitalLocResponseDto(
-                    h.getNameKorean(),
-                    h.getAddressKorean(),
-                    h.getSpecialtyKorean(),
-                    h.getPNumber(),
-                    h.getLanguage(),
-                    h.getLatitude(),
-                    h.getLongitude(),
-                    h.getYkiho()
-            ))
-            .collect(Collectors.toList());
 
-//    // 4. Static Maps API URL 생성
-//    String markers = filteredHospitals.stream()
-//            .map(h -> "&markers=color:red|" + h.latitude() + "," + h.longitude())
-//            .collect(Collectors.joining());
+    // 3. 조건에 맞는 병원 필터링
+    List<HospitalLocResponseDto> filteredHospitals = null;
+
+    // 지원 가능 언어에 '한국어'라고 적혀있지 않기 때문에 '한국어'인 경우에 아래와 같이 수행
+    if (country.equals("korea")){
+      allHospitals.stream()
+              .filter(h -> distance(userLat, userLng, h.getLatitude(), h.getLongitude()) < 1.0) // 거리 1km 미만
+              .filter(h -> hasExactDepartment(h.getSpecialtyKorean(), department))  // 진료 과목
+              .map(h -> new HospitalLocResponseDto(
+                      h.getNameKorean(),
+                      h.getAddressKorean(),
+                      h.getSpecialtyKorean(),
+                      h.getPNumber(),
+                      h.getLanguage(),
+                      h.getLatitude(),
+                      h.getLongitude(),
+                      h.getYkiho()
+              ))
+              .collect(Collectors.toList());
+    }
+    else{
+      filteredHospitals = allHospitals.stream()
+              .filter(h -> distance(userLat, userLng, h.getLatitude(), h.getLongitude()) < 1.0) // 거리 1km 미만
+              .filter(h -> hasExactDepartment(h.getSpecialtyKorean(), department))  // 진료 과목
+              .filter(h -> h.getLanguage() != null && h.getLanguage().contains(EN_TO_KO.get(country))) // 지원 가능 언어
+              .map(h -> new HospitalLocResponseDto(
+                      h.getNameKorean(),
+                      h.getAddressKorean(),
+                      h.getSpecialtyKorean(),
+                      h.getPNumber(),
+                      h.getLanguage(),
+                      h.getLatitude(),
+                      h.getLongitude(),
+                      h.getYkiho()
+              ))
+              .collect(Collectors.toList());
+    }
+
 
     // 4. Static Maps API URL 생성
     String markers = filteredHospitals.stream()

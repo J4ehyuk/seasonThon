@@ -22,7 +22,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # ✅ 3. gradlew 실행 가능하게 만들기 (프로젝트 루트의 gradlew 파일에 실행 권한을 줘서, 이후에 ./gradlew build 같은 명령어가 작동할 수 있게 만든다)
+      # ✅ 3. GitHub Actions VM에서 gradlew 실행 가능하게 만들기 (프로젝트 루트의 gradlew 파일에 실행 권한을 줘서, 이후에 ./gradlew build 같은 명령어가 작동할 수 있게 만든다)
       - name: Grant execute permission for Gradle
         run: chmod +x ./gradlew
 
