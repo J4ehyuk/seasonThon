@@ -48,7 +48,7 @@ public class HospitalService {
     List<HospitalLocResponseDto> filteredHospitals = null;
 
     // 지원 가능 언어에 '한국어'라고 적혀있지 않기 때문에 '한국어'인 경우에 아래와 같이 수행
-    if (country.equals("korea")){
+    if (country.equals("Korea")){
       allHospitals.stream()
               .filter(h -> distance(userLat, userLng, h.getLatitude(), h.getLongitude()) < 1.0) // 거리 1km 미만
               .filter(h -> hasExactDepartment(h.getSpecialtyKorean(), department))  // 진료 과목
