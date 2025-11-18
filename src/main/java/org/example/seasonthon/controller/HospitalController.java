@@ -19,7 +19,7 @@ import java.util.List;
 
 @Tag(name = "증상 판별 + 병원 검색 API", description = "증상 판별과 사용자 위치 기반으로 병원을 검색합니다.")
 public class HospitalController {
-
+  // a
   private final HospitalService hospitalService;
 
   @PostMapping("/search")
